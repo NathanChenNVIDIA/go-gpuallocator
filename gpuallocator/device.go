@@ -19,7 +19,7 @@ type Device struct {
 	*nvml.Device
 	Index int
 	Links map[int][]P2PLink
-	PhysicalID uint
+	PhysicalID int
 }
 
 // P2PLink represents a Point-to-Point link between two GPU devices. The link
@@ -47,7 +47,7 @@ func NewDevices() ([]*Device, error) {
 			return nil, fmt.Errorf("error creating nvml.Device %v: %v", i, err)
 		}
 
-		devices = append(devices, &Device{device, i, make(map[int][]P2PLink)}, 999)
+		devices = append(devices, &Device{device, i, make(map[int][]P2PLink), 999})
 	}
 
 	for i, d1 := range devices {
@@ -199,7 +199,7 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         devices := make([]*Device, 0, len(ds))
 
         for _, device := range ds {
-                device.PhysicalID = physicalID[IndexToBDF[device.Index]]
+		device.PhysicalID = physicalID[IndexToBDF[uint(device.Index)]]
                 devices = append(devices, device)
         }
 
