@@ -19,7 +19,7 @@ type Device struct {
 	*nvml.Device
 	Index int
 	Links map[int][]P2PLink
-	PhysicalID int
+	PhysicalID uint
 }
 
 // P2PLink represents a Point-to-Point link between two GPU devices. The link
@@ -47,7 +47,7 @@ func NewDevices() ([]*Device, error) {
 			return nil, fmt.Errorf("error creating nvml.Device %v: %v", i, err)
 		}
 
-		devices = append(devices, &Device{device, i, make(map[int][]P2PLink)})
+		devices = append(devices, &Device{device, i, make(map[int][]P2PLink)}, 999)
 	}
 
 	for i, d1 := range devices {
@@ -180,21 +180,21 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         } else {
                 file, ioerr := ioutil.ReadFile("/tmp/physicalIDdump.json")
                 file2, ioerr2 := ioutil.ReadFile("/tmp/IndexToBDFdump.json")
+		if ioerr != nil {
+			fmt.Println(ioerr)
+		} else if ioerr2 != nil {
+			fmt.Println(ioerr2)
+		} else {
+			jerr := json.Unmarshal([]byte(file), &physicalID)
+			if jerr != nil {
+				fmt.Println(err)
+			}
+			jerr2 := json.Unmarshal([]byte(file), &IndexToBDF)
+			if jerr != nil {
+				fmt.Println(err)
+			}
+		}
 	}
-        if ioerr != nil {
-                fmt.Println(ioerr)
-        } else if ioerr2 != nil {
-                fmt.Println(ioerr2)
-        } else {
-                jerr := json.Unmarshal([]byte(file), &physicalID)
-                if jerr != nil {
-                        fmt.Println(err)
-                }
-                jerr2 := json.Unmarshal([]byte(file), &IndexToBDF)
-                if jerr != nil {
-                        fmt.Println(err)
-                }
-        }
 
         devices := make([]*Device, 0, len(ds))
 
