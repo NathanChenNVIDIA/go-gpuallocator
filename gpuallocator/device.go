@@ -189,8 +189,8 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
 			if jerr != nil {
 				fmt.Println(err)
 			}
-			jerr2 := json.Unmarshal([]byte(file), &IndexToBDF)
-			if jerr != nil {
+			jerr2 := json.Unmarshal([]byte(file2), &IndexToBDF)
+			if jerr2 != nil {
 				fmt.Println(err)
 			}
 		}
