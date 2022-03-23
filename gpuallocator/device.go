@@ -199,7 +199,7 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         devices := make([]*Device, 0, len(ds))
 
         for _, device := range ds {
-		device.PhysicalID = physicalID[IndexToBDF[uint(device.Index)]]
+		device.PhysicalID = int(physicalID[IndexToBDF[uint(device.Index)]])
                 devices = append(devices, device)
         }
 
