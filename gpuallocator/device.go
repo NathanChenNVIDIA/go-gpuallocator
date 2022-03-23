@@ -15,8 +15,8 @@ import (
 type Device struct {
 	*nvml.Device
 	Index int
-	PhysicalID int
 	Links map[int][]P2PLink
+	PhysicalID int
 }
 
 // P2PLink represents a Point-to-Point link between two GPU devices. The link
@@ -177,6 +177,7 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         } else {
                 file, ioerr := ioutil.ReadFile("/tmp/physicalIDdump.json")
                 file2, ioerr2 := ioutil.ReadFile("/tmp/IndexToBDFdump.json")
+	}
         if ioerr != nil {
                 fmt.Println(ioerr)
         } else if ioerr2 != nil {
