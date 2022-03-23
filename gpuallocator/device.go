@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"io/ioutil"
+	"encoding/json"
+	"os/exec"
 
 	"github.com/NVIDIA/gpu-monitoring-tools/bindings/go/nvml"
 )
