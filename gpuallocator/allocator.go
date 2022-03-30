@@ -38,7 +38,7 @@ func NewSimpleAllocator() (*Allocator, error) {
 }
 
 func NewPhysicalIDAllocator() (*Allocator, error) {
-	return NewAllocator(NewSimplePolicy())
+	return NewAllocator(NewPhysicalIDPolicy())
 }
 
 // NewBestEffortAllocator creates a new Allocator using the BestEffort
