@@ -173,7 +173,7 @@ func (ds DeviceSet) ContainsAll(devices []*Device) bool {
 func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         physicalID := make(map[string]uint)
         IndexToBDF := make(map[uint]string)
-        cmd := exec.Command("/etc/nvrg/physicalIDdump.py")
+        cmd := exec.Command("/etc/nvrg/physicalIDdump-bash.py")
         _, err := cmd.Output()
         if err != nil {
                 fmt.Println(err)
