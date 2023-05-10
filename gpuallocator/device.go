@@ -178,8 +178,8 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
         if err != nil {
                 fmt.Println(err)
         } else {
-                file, ioerr := ioutil.ReadFile("/tmp/physicalIDdump.json")
-                file2, ioerr2 := ioutil.ReadFile("/tmp/IndexToBDFdump.json")
+                file, ioerr := ioutil.ReadFile("/etc/nvrg/physicalIDdump.json")
+                file2, ioerr2 := ioutil.ReadFile("/etc/nvrg/IndexToBDFdump.json")
 		if ioerr != nil {
 			fmt.Println(ioerr)
 		} else if ioerr2 != nil {
