@@ -28,7 +28,7 @@ type Policy interface {
 	// then returns a subset of devices of length 'size'. If the policy is
 	// unable to allocate 'size' GPUs from the slice of input devices, it
 	// returns an empty slice.
-	Allocate(available []*Device, required []*Device, size int) []*Device
+	Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device
 }
 
 // NewSimpleAllocator creates a new Allocator using the Simple allocation
