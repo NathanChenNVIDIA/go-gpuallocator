@@ -58,7 +58,7 @@ func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Devic
 }
 
 // Allocate GPUs following the Static DGX-1 policy for Volta GPUs.
-func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
@@ -82,7 +82,7 @@ func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device
 }
 
 // Allocate GPUs following the Static DGX-2 policy for Volta GPUs.
-func (p *staticDGX2VoltaPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *staticDGX2VoltaPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
