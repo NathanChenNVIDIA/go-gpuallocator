@@ -170,7 +170,7 @@ func (ds DeviceSet) ContainsAll(devices []*Device) bool {
 
 // PhysicalIDSortedSlice returns a slice of devices,
 // sorted by device physical ID from a DeviceSet.
-func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
+func (ds DeviceSet) PhysicalIDSortedSlice(partitionGroupPhysIds []int) []*Device {
         physicalID := make(map[string]uint)
         IndexToBDF := make(map[uint]string)
         cmd := exec.Command("/etc/nvrg/physicalIDdump-bash.py")
@@ -200,7 +200,11 @@ func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
 
         for _, device := range ds {
 		device.PhysicalID = int(physicalID[IndexToBDF[uint(device.Index)]])
-                devices = append(devices, device)
+		for _, partGroupGpuPhysId := range partitionGroupPhysIds {
+			if (partGroupGpuPhysId == device.PhysicalID) {
+                		devices = append(devices, device)
+			}
+		}
         }
 
         sort.Slice(devices, func(i, j int) bool {

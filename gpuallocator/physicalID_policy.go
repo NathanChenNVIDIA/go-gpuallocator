@@ -10,7 +10,7 @@ func NewPhysicalIDPolicy() Policy {
 }
 
 // Allocate GPUs following a simple policy.
-func (p *physicalIDPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *physicalIDPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
         if size <= 0 {
                 return []*Device{}
         }
@@ -30,6 +30,6 @@ func (p *physicalIDPolicy) Allocate(available []*Device, required []*Device, siz
         availableSet.Delete(required...)
 
         allocated := append([]*Device{}, required...)
-        allocated = append(allocated, availableSet.PhysicalIDSortedSlice()[:size-len(allocated)]...)
+        allocated = append(allocated, availableSet.PhysicalIDSortedSlice(partitionGroupPhysIds)[:size-len(allocated)]...)
         return allocated
 }
