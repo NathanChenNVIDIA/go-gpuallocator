@@ -34,7 +34,7 @@ func NewStaticDGX2Policy() Policy {
 }
 
 // Allocate GPUs following the Static DGX-1 policy for Pascal GPUs.
-func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}

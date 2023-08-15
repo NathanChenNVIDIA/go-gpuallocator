@@ -31,7 +31,7 @@ func NewBestEffortPolicy() Policy {
 //  Such a solution is necessary in the general case because of the
 //  non-hierarchical nature of the various links that influence the score
 //  calculated for each pair of GPUs.
-func (p *bestEffortPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *bestEffortPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}

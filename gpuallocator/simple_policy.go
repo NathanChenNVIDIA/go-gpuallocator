@@ -10,7 +10,7 @@ func NewSimplePolicy() Policy {
 }
 
 // Allocate GPUs following a simple policy.
-func (p *simplePolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+func (p *simplePolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
