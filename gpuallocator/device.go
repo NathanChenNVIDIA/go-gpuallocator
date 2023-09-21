@@ -167,10 +167,51 @@ func (ds DeviceSet) ContainsAll(devices []*Device) bool {
 	return true
 }
 
+// PhysicalIDSortedSlice returns a slice of devices,
+// sorted by device physical ID from a DeviceSet.
+func (ds DeviceSet) PhysicalIDSortedSlice() []*Device {
+        physicalID := make(map[string]uint)
+        IndexToBDF := make(map[uint]string)
+        cmd := exec.Command("/etc/nvrg/physicalIDdump-bash.py")
+        _, err := cmd.Output()
+        if err != nil {
+                fmt.Println(err)
+        } else {
+                file, ioerr := ioutil.ReadFile("/etc/nvrg/physicalIDdump.json")
+                file2, ioerr2 := ioutil.ReadFile("/etc/nvrg/IndexToBDFdump.json")
+		if ioerr != nil {
+			fmt.Println(ioerr)
+		} else if ioerr2 != nil {
+			fmt.Println(ioerr2)
+		} else {
+			jerr := json.Unmarshal([]byte(file), &physicalID)
+			if jerr != nil {
+				fmt.Println(err)
+			}
+			jerr2 := json.Unmarshal([]byte(file2), &IndexToBDF)
+			if jerr2 != nil {
+				fmt.Println(err)
+			}
+		}
+	}
+
+        devices := make([]*Device, 0, len(ds))
+
+        for _, device := range ds {
+		device.PhysicalID = int(physicalID[IndexToBDF[uint(device.Index)]])
+                devices = append(devices, device)
+        }
+
+        sort.Slice(devices, func(i, j int) bool {
+                return devices[i].PhysicalID < devices[j].PhysicalID
+        })
+
+        return devices
+}
 
 // PhysicalIDSortedSlice returns a slice of devices,
 // sorted by device physical ID from a DeviceSet.
-func (ds DeviceSet) PhysicalIDSortedSlice(partitionGroupPhysIds []int) []*Device {
+func (ds DeviceSet) PhysicalIDSortedSliceSNV(partitionGroupPhysIds []int) []*Device {
         physicalID := make(map[string]uint)
         IndexToBDF := make(map[uint]string)
         cmd := exec.Command("/etc/nvrg/physicalIDdump-bash.py")

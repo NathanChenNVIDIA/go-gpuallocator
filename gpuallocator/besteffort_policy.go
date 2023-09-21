@@ -31,7 +31,64 @@ func NewBestEffortPolicy() Policy {
 //  Such a solution is necessary in the general case because of the
 //  non-hierarchical nature of the various links that influence the score
 //  calculated for each pair of GPUs.
-func (p *bestEffortPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
+func (p *bestEffortPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+	if size <= 0 {
+		return []*Device{}
+	}
+
+	if len(available) < size {
+		return []*Device{}
+	}
+
+	if len(required) > size {
+		return []*Device{}
+	}
+
+	// Find the highest scoring GPU partition with sets of of size 'size'.
+	// Don't consider partitions that don't have at least one set that contains
+	// all of the GPUs 'required' by the allocation.
+	bestPartition := [][]*Device(nil)
+	bestScore := 0
+	iterateGPUPartitions(available, size, func(candidate [][]*Device) {
+		if !gpuPartitionContainsSetWithAll(candidate, required) {
+			return
+		}
+		score := calculateGPUPartitionScore(candidate)
+		if score > bestScore || bestPartition == nil {
+			bestPartition = candidate
+			bestScore = score
+		}
+	})
+
+	// Filter the 'bestPartition' to only include sets containing all of the
+	// 'required' devices (which may be nil so all sets will be valid).
+	filteredBestPartition := [][]*Device{}
+	for _, set := range bestPartition {
+		if gpuSetContainsAll(set, required) {
+			filteredBestPartition = append(filteredBestPartition, set)
+		}
+	}
+
+	if len(filteredBestPartition) == 0 {
+		return []*Device{}
+	}
+
+	// Find the highest scoring GPU set in the highest scoring GPU partition.
+	bestSet := filteredBestPartition[0]
+	bestScore = calculateGPUSetScore(bestSet)
+	for i := 1; i < len(filteredBestPartition); i++ {
+		score := calculateGPUSetScore(filteredBestPartition[i])
+		if score > bestScore {
+			bestSet = filteredBestPartition[i]
+			bestScore = score
+		}
+	}
+
+	// Return the highest scoring GPU set.
+	return bestSet
+}
+
+func (p *bestEffortPolicy) AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}

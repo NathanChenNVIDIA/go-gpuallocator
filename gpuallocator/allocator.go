@@ -28,7 +28,8 @@ type Policy interface {
 	// then returns a subset of devices of length 'size'. If the policy is
 	// unable to allocate 'size' GPUs from the slice of input devices, it
 	// returns an empty slice.
-	Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device
+	Allocate(available []*Device, required []*Device, size int) []*Device
+	AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device
 }
 
 // NewSimpleAllocator creates a new Allocator using the Simple allocation
@@ -84,7 +85,21 @@ func newAllocatorFrom(devices []*Device, policy Policy) *Allocator {
 
 // Allocate a set of 'num' GPUs from the allocator.
 // If 'num' devices cannot be allocated, return an empty slice.
-func (a *Allocator) Allocate(num int, partitionGroupPhysIds []int) []*Device {
+func (a *Allocator) AllocateSNV(num int) []*Device {
+	devices := a.policy.Allocate(a.remaining.SortedSlice(), nil, num)
+
+	err := a.AllocateSpecific(devices...)
+	if err != nil {
+		err = fmt.Errorf("Internal error while allocating GPUs: %v", err)
+		panic(err)
+	}
+
+	return devices
+}
+
+// Allocate a set of 'num' GPUs from the allocator.
+// If 'num' devices cannot be allocated, return an empty slice.
+func (a *Allocator) AllocateSNV(num int, partitionGroupPhysIds []int) []*Device {
 	devices := a.policy.Allocate(a.remaining.SortedSlice(), nil, num, partitionGroupPhysIds)
 
 	err := a.AllocateSpecific(devices...)

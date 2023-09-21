@@ -34,7 +34,31 @@ func NewStaticDGX2Policy() Policy {
 }
 
 // Allocate GPUs following the Static DGX-1 policy for Pascal GPUs.
-func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
+func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+	if size <= 0 {
+		return []*Device{}
+	}
+
+	if len(available) < size {
+		return []*Device{}
+	}
+
+	if len(required) > size {
+		return []*Device{}
+	}
+
+	validSets := map[int][][]int{
+		1: {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}},
+		2: {{0, 2}, {1, 3}, {4, 6}, {5, 7}},
+		4: {{0, 1, 2, 3}, {4, 5, 6, 7}},
+		8: {{0, 1, 2, 3, 4, 5, 6, 7}},
+	}
+
+	return findGPUSet(available, required, size, validSets[size])
+}
+
+// Allocate GPUs following the Static DGX-1 policy for Pascal GPUs.
+func (p *staticDGX1PascalPolicy) AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
@@ -58,7 +82,31 @@ func (p *staticDGX1PascalPolicy) Allocate(available []*Device, required []*Devic
 }
 
 // Allocate GPUs following the Static DGX-1 policy for Volta GPUs.
-func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
+func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+	if size <= 0 {
+		return []*Device{}
+	}
+
+	if len(available) < size {
+		return []*Device{}
+	}
+
+	if len(required) > size {
+		return []*Device{}
+	}
+
+	validSets := map[int][][]int{
+		1: {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}},
+		2: {{0, 3}, {1, 2}, {4, 7}, {5, 6}},
+		4: {{0, 1, 2, 3}, {4, 5, 6, 7}},
+		8: {{0, 1, 2, 3, 4, 5, 6, 7}},
+	}
+
+	return findGPUSet(available, required, size, validSets[size])
+}
+
+// Allocate GPUs following the Static DGX-1 policy for Volta GPUs.
+func (p *staticDGX1VoltaPolicy) AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
@@ -82,7 +130,32 @@ func (p *staticDGX1VoltaPolicy) Allocate(available []*Device, required []*Device
 }
 
 // Allocate GPUs following the Static DGX-2 policy for Volta GPUs.
-func (p *staticDGX2VoltaPolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
+func (p *staticDGX2VoltaPolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+	if size <= 0 {
+		return []*Device{}
+	}
+
+	if len(available) < size {
+		return []*Device{}
+	}
+
+	if len(required) > size {
+		return []*Device{}
+	}
+
+	validSets := map[int][][]int{
+		1:  {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}},
+		2:  {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10, 11}, {12, 13}, {14, 15}},
+		4:  {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}},
+		8:  {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}},
+		16: {{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}},
+	}
+
+	return findGPUSet(available, required, size, validSets[size])
+}
+
+// Allocate GPUs following the Static DGX-2 policy for Volta GPUs.
+func (p *staticDGX2VoltaPolicy) AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}

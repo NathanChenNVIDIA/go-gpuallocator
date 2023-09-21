@@ -10,7 +10,32 @@ func NewSimplePolicy() Policy {
 }
 
 // Allocate GPUs following a simple policy.
-func (p *simplePolicy) Allocate(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
+func (p *simplePolicy) Allocate(available []*Device, required []*Device, size int) []*Device {
+	if size <= 0 {
+		return []*Device{}
+	}
+
+	if len(available) < size {
+		return []*Device{}
+	}
+
+	if len(required) > size {
+		return []*Device{}
+	}
+
+	availableSet := NewDeviceSet(available...)
+	if !availableSet.ContainsAll(required) {
+		return []*Device{}
+	}
+	availableSet.Delete(required...)
+
+	allocated := append([]*Device{}, required...)
+	allocated = append(allocated, availableSet.SortedSlice()[:size-len(allocated)]...)
+	return allocated
+}
+
+// Allocate GPUs following a simple policy.
+func (p *simplePolicy) AllocateSNV(available []*Device, required []*Device, size int, partitionGroupPhysIds []int) []*Device {
 	if size <= 0 {
 		return []*Device{}
 	}
