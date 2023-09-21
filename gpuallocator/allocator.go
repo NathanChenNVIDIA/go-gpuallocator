@@ -85,7 +85,7 @@ func newAllocatorFrom(devices []*Device, policy Policy) *Allocator {
 
 // Allocate a set of 'num' GPUs from the allocator.
 // If 'num' devices cannot be allocated, return an empty slice.
-func (a *Allocator) AllocateSNV(num int) []*Device {
+func (a *Allocator) Allocate(num int) []*Device {
 	devices := a.policy.Allocate(a.remaining.SortedSlice(), nil, num)
 
 	err := a.AllocateSpecific(devices...)
@@ -100,7 +100,7 @@ func (a *Allocator) AllocateSNV(num int) []*Device {
 // Allocate a set of 'num' GPUs from the allocator.
 // If 'num' devices cannot be allocated, return an empty slice.
 func (a *Allocator) AllocateSNV(num int, partitionGroupPhysIds []int) []*Device {
-	devices := a.policy.Allocate(a.remaining.SortedSlice(), nil, num, partitionGroupPhysIds)
+	devices := a.policy.AllocateSNV(a.remaining.SortedSlice(), nil, num, partitionGroupPhysIds)
 
 	err := a.AllocateSpecific(devices...)
 	if err != nil {
